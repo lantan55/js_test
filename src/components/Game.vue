@@ -4,48 +4,66 @@
       <v-col cols="8">
         <h1>Тест по JavaScript</h1>
         <v-card>
-          <v-stepper v-model="e1" >
-            <v-stepper-header>
-              <v-stepper-step v-for="(item, i) in qnty"
-                              class="step-custom"
-                :key="i"
-                :step="i+1"
-                color="purple"
-                :complete="questions[i].correctAnswer"
+          <v-card-title>
+            test
+          </v-card-title>
+          <v-card-subtitle>
+<!--            <div-->
+<!--                    v-for="(item, i) in qnty"-->
+<!--                    :key="i"-->
+<!--                    :complete="questions[i].correctAnswer"-->
+<!--            >-->
+
+<!--            </div>-->
+          </v-card-subtitle>
+          <v-card-text>
+            <div
+                    v-for="(item, i) in 2"
+                    :key="i"
+                    :step="i+1"
+            >
+              <Timer ref="timer" @time-out="checkAnswer(selected, item)"/>
+              <h2>{{ i + 1 }}.
+                <span>{{ item.header }}</span>
+              </h2>
+              <v-card
+                      v-if="item.body"
+                      class="mb-4 mt-4 pa-2 body-desc"
+                      color="grey lighten-2"
               >
-              </v-stepper-step>
-            </v-stepper-header>
-            <v-stepper-items>
-              <v-stepper-content
-                v-for="(item, i) in questions"
-                :key="i"
-                :step="i+1"
-              >
-                {{item.correctAnswer}}
-                <h2>{{ i + 1 }}.
-                  <span>{{ item.header }}</span>
-                </h2>
-                <v-card
-                        v-if="item.body"
-                        class="mb-4 mt-4 pa-2 body-desc"
-                        color="grey lighten-2"
-                >
-                  {{ item.body }}
-                </v-card>
-                  <v-radio-group v-model="selected">
-                    <v-radio class="radio mt-0" v-for="(n, i) in item.answers" :key="`${i}-radio`" :value="n.id" :label="n.text" ></v-radio>
-                  </v-radio-group>
-                <v-btn
-                  class="white--text"
-                  :color="btn ? 'green' : 'primary'"
-                  @click="nextStep(i + 1, item)"
-                  :disabled="!selected"
-                >
-                  {{ btn ? 'Завершить' : 'Ответить' }}
-                </v-btn>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
+                {{ item.body }}
+              </v-card>
+              <v-radio-group v-model="selected">
+                <div v-for="(n, i) in item.answers" :key="`${i}-radio`">
+                  <v-radio  class="radio mt-0 success--text" color="primary"  :disabled="disabled" :value="n.id" >
+                    <template v-slot:label>
+                      <span :class="{ 'success--text' : n.tips && showResult }">{{n.text}}</span>
+                    </template>
+                  </v-radio>
+                  <span class="tip" v-if="n.tips && showResult">
+                      {{ n.tips }}
+                    </span>
+                </div>
+
+
+              </v-radio-group>
+            </div>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-btn
+                    class="white--text  ma-2"
+                    :color="btn ? 'green' : 'primary'"
+                    @click="answer(item)"
+                    :disabled="disabled"
+
+            >
+              {{ btn ? 'Завершить' : 'Ответить' }}
+            </v-btn>
+            <v-btn color="primary ma-2" :disabled="!disabled">
+              Далее
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -53,112 +71,75 @@
 </template>
 
 <script>
+  import axios from 'axios'
+
   export default {
     name: 'Game',
-
+    components: {
+      Timer: () => import('../components/Timer')
+    },
     data: () => ({
       e1: 1,
       selected: null,
-      questions: [
-        {
-          correctAnswer: false,
-          header: 'Чему равно это выражение?',
-          body: '[].push(1,2).unshift(3).join()',
-          answers: [
-            {
-              id: 1,
-              text: '3,1'
-            },
-            {
-              id: 2,
-              text: '1,2,3'
-            },
-            {
-              id: 3,
-              text: '3,1,2'
-            },
-            {
-              id: 4,
-              text: 'В коде ошибка.'
-            },
-          ],
-          correct: 1
-        },
-        {
-          correctAnswer: false,
-          header: 'Вопрос 2',
-          body: 'body',
-          answers: [
-            {
-              id: 1,
-              text: '3,1'
-            },
-            {
-              id: 2,
-              text: '1,2,3'
-            },
-            {
-              id: 3,
-              text: '3,1,2'
-            },
-            {
-              id: 4,
-              text: 'В коде ошибка.'
-            },
-          ],
-          correct: 2
-        },
-        {
-          correctAnswer: false,
-          header: 'Вопрос 3',
-          body: 'body',
-          answers: [
-            {
-              id: 1,
-              text: '3,1'
-            },
-            {
-              id: 2,
-              text: '1,2,3'
-            },
-            {
-              id: 3,
-              text: '3,1,2'
-            },
-            {
-              id: 4,
-              text: 'В коде ошибка.'
-            },
-          ],
-          correct: 1
-        }
-      ]
+      value: 100,
+      disabled: false,
+      showResult: false,
+      questions: []
     }),
+    mounted() {
+      axios
+        .get(`./src/static/db.json`)
+        .then(response => (console.log(response.data)))
+        .catch((e) => console.log(e))
+    },
+    watch: {
+
+    },
     computed: {
+
       qnty() {
         return this.questions.length
       },
       btn(){
         return this.questions.length == this.e1
       },
-
     },
+
     methods: {
-      nextStep(n, item){
-        if(item.correct === this.selected){
-          this.questions[n - 1].correctAnswer = true
+
+
+      timerOff(){
+        this.disabled = true
+        this.showResult = true
+      },
+      answer(item){
+        if(this.selected){
+          const arr = item
+          this.$refs.timer[0].stopTimer()
+          this.disabled = true
+          console.log('таймер стоп')
+          this.checkAnswer(this.selected, arr)
         }
-        if(this.e1 === this.questions.length)
-          console.log('Тест завершен')
-        else
-          this.e1 = n + 1
-        this.selected = null
+      },
+      checkAnswer(id, item){
+        console.log(id, item)
+        if(id){
+          if(item.answers[id - 1].correct){
+            console.log('Вы правильно ответили')
+          }else{
+            console.log('Ответ не верный')
+          }
+        }else{
+          console.log('Нет ответа')
+        }
+        this.showResult = true
       }
     }
   }
 </script>
 <style lang="scss" scoped>
   h2{
+    margin-top:10px;
     font-size: 20px;
     text-align: left;
     span{
@@ -175,6 +156,19 @@
       padding: 10px 0 10px 10px;
     }
   }
+  span.tip{
+    display: block;
+    padding: 5px;
+    margin-bottom: 15px;
+    width: 100%;
+    border: 1px solid #000;
+    font-size: 12px;
+  }
 
 
 </style>
+
+
+
+
+

@@ -1,0 +1,67 @@
+{
+  "questions": [
+    {
+      "header": "Чему равно это выражение?",
+      "body": "[].push(1,2).unshift(3).join()",
+      "answers": [
+        {
+          "id": 1,
+          "text": "3,1",
+          "correct": true,
+          "tips": "Правильный ответ"
+        },
+        {
+          "id": 2,
+          "text": "1,2,3",
+          "correct": false
+        },
+        {
+          "id": 3,
+          "text": "3,1,2",
+          "correct": false
+        },
+        {
+          "id": 4,
+          "text": "В коде ошибка.",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "header": "Чему равно 0 || \"\" || 2 || undefined || true || falsе ?",
+      "body": "",
+      "answers": [
+        {
+          "id": 1,
+          "text": "0",
+          "correct": true,
+          "tips": "Правильный ответ"
+        },
+        {
+          "id": 2,
+          "text": "\"\"",
+          "correct": true,
+          "tips": "Правильный ответ"
+        },
+        {
+          "id": 3,
+          "text": "2",
+          "correct": "undefined",
+          "tips": "Правильный ответ"
+        },
+        {
+          "id": 4,
+          "text": "true",
+          "correct": true,
+          "tips": "Правильный ответ"
+        },
+        {
+          "id": 5,
+          "text": "false",
+          "correct": true,
+          "tips": "Правильный ответ"
+        }
+      ]
+    }
+  ]
+}
