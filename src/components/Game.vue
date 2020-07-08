@@ -2,20 +2,24 @@
   <v-container class="fill-height" >
     <v-row class="text-center" justify="center" >
       <v-col cols="8">
-        <div v-if="question === null">
+        <div v-if="questionsList.length === 0">
+          <h1>Выберите вариант теста:</h1>
           <v-row>
-            <v-col cols="4">
-              <v-btn block outlined class="" color="primary"  @click="startTest()">
-                1
+            <v-col cols="4" v-for="(item, index) in langs" :key="index">
+              <v-btn block outlined class="" color="primary"  @click="startTest(item.name, item.id)">
+                {{item.name}}
               </v-btn>
             </v-col>
           </v-row>
-          <h1>Выберите вариант теста:</h1>
-
         </div>
+
         <v-card v-else>
+          <div class="d-flex flex-row-reverse">
+            <v-btn class="mt-2 mr-2" color="red" small @click="clearTest" outlined>Выйти</v-btn>
+          </div>
           <v-card-title>
-            JavaScript. Уровень 1
+            {{header}}
+
           </v-card-title>
           <v-card-subtitle>
 <!--            <div-->
@@ -29,29 +33,27 @@
           <v-card-text>
             <div >
               <Timer ref="timer" @time-out="checkAnswer(selected, question)"/>
-              <h2>{{ question.id }}.
-                <span>{{ question.header }}</span>
+              <h2>тест.
+                <span>тест</span>
               </h2>
               <v-card
-                      v-if="question.body"
+
                       class="mb-4 mt-4 pa-2 body-desc"
                       color="grey lighten-2"
               >
-                {{ question.body }}
+                тест
               </v-card>
               <v-radio-group v-model="selected">
-                <div v-for="(n, i) in question.answers" :key="`${i}-radio`">
-                  <v-radio  class="radio mt-0 success--text" color="primary"  :disabled="disabled" :value="n.id" >
-                    <template v-slot:label>
-                      <span :class="{ 'success--text' : n.tips && showResult }">{{n.text}}</span>
-                    </template>
-                  </v-radio>
-                  <span class="tip success lighten-1 white--text" v-if="n.tips && showResult">
-                      {{ n.tips }}
-                  </span>
-                </div>
-
-
+<!--                <div v-for="(n, i) in question.answers" :key="`${i}-radio`">-->
+<!--                  <v-radio  class="radio mt-0 success&#45;&#45;text" color="primary"  :disabled="disabled" :value="n.id" >-->
+<!--                    <template v-slot:label>-->
+<!--                      <span :class="{ 'success&#45;&#45;text' : n.tips && showResult }">{{n.text}}</span>-->
+<!--                    </template>-->
+<!--                  </v-radio>-->
+<!--                  <span class="tip success lighten-1 white&#45;&#45;text" v-if="n.tips && showResult">-->
+<!--                      {{ n.tips }}-->
+<!--                  </span>-->
+<!--                </div>-->
               </v-radio-group>
             </div>
           </v-card-text>
@@ -69,48 +71,14 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-  // const db = require('../static/db.json')
-  import { db } from '../main'
-  // const answers = require('../static/db_ans.json')
+  import { db } from '../static/db'
 
-
-  class Test {
-    // constructor(props) {
-    //   this.id = props.id
-    //   this.name = props.name
-    // }
-
-    getLangAll(){
-
-      return db.collection('tests')
-              .get()
-              .then(querySnapshot => {
-                const document = querySnapshot.docs.map(doc => doc.data())
-                console.log(document)
-              })
-
-    }
-    getLang(id){
-
-        db.collection('tests')
-              .doc(id)
-              .get()
-              .then(snapshot => {
-                return  snapshot.data()
-              })
-
-    }
-
-  }
-
-  const test = new Test()
   export default {
     name: 'Game',
     components: {
@@ -118,47 +86,76 @@
     },
 
     data: () => ({
-      lang: [],
-      test: null,
-      el: 0,
+      header:'',
+      langs: null,
+      tests: null,
+      questionsList: [],
+      question: {},
+      // answer: null,
+      // el: 0,
+
+
       selected: null,
       value: 100,
       disabled: false,
       showResult: false,
-      question: null,
-      answers: []
+
     }),
+    firestore: {
+      langs: db.collection('langs')
+    },
 
     mounted() {
-      test.getLangAll()
-      console.log('mounted', test.getLangAll())
-      test.getLang('wSquTpcqZkTbdQKryKYR' )
     },
     watch: {
-
     },
     computed: {
-
     },
 
     methods: {
-      startTest(value){
-        console.log(this.test)
-        this.test = db[value]
+      startTest(name, id){
+        this.header = name
+        this.questionsList = this.getQuestionsList(id)
+        this.questionsList.forEach( item => item.header)
+        console.log('questionList', this.questionsList)
+        console.log('forEach', this.questionsList.forEach( item => item.header))
+        this.getQuestion()
+      },
+      getQuestionsList(id){
+        let res = []
+        db
+                .collection("tests")
+                .where("lang_id", "==", id)
+                .get()
+                .then(function(querySnapshot) {
+                  querySnapshot.forEach(function(doc) {
+                      const data = {
+                          header: doc.data().header
+                      }
+                    res.push(data)
+                  });
+                })
+                .catch(function(error) {
+                  console.log("Error getting documents: ", error);
+                });
+        return res
+      },
+      getQuestion(){
+          // console.log(this.questionsList)
       },
       timerOff(){
         this.disabled = true
         this.showResult = true
       },
-      answer(item){
-        if(this.selected){
-          const arr = item
-          this.$refs.timer[0].stopTimer()
-          this.disabled = true
-          console.log('таймер стоп')
-          this.checkAnswer(this.selected, arr)
-        }
-      },
+      // answer(item){
+      //   if(this.selected){
+      //     const arr = item
+      //     this.$refs.timer[0].stopTimer()
+      //     this.disabled = true
+      //     console.log('таймер стоп')
+      //     this.checkAnswer(this.selected, arr)
+      //   }
+      // },
       checkAnswer(id, item){
         console.log(id, item)
         if(id){
@@ -171,6 +168,13 @@
           console.log('Нет ответа')
         }
         this.showResult = true
+      },
+      clearTest(){
+          let q = confirm('Вы действительно хотите завершить тест?')
+          if(q){
+              this.answersList = null
+          }
+
       }
     }
   }
