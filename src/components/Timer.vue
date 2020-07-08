@@ -44,7 +44,7 @@
         }
     };
 
-    const TIME_LIMIT = 500;
+    const TIME_LIMIT = 300;
 
     export default {
         data() {

@@ -1,6 +1,7 @@
 {
-  "questions": [
+  "js": [
     {
+      "id": 1,
       "header": "Чему равно это выражение?",
       "body": "[].push(1,2).unshift(3).join()",
       "answers": [
@@ -28,6 +29,7 @@
       ]
     },
     {
+      "id": 2,
       "header": "Чему равно 0 || \"\" || 2 || undefined || true || falsе ?",
       "body": "",
       "answers": [
