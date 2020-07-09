@@ -1,88 +1,93 @@
 <template>
   <v-container class="fill-height" >
-    <v-row class="text-center" justify="center" >
-      <v-col cols="8">
-        <div v-if="questionsList.length === 0">
-          <h1>Выберите вариант теста:</h1>
-          <v-row>
-            <v-col cols="4" v-for="(item, index) in langs" :key="index">
-              <v-btn block outlined class="" color="primary"  @click="startTest(item.name, item.id)">
-                {{item.name}}
-              </v-btn>
-            </v-col>
-          </v-row>
-        </div>
+      <Form/>
+<!--    <v-row class="text-center" justify="center" >-->
+<!--      <v-col cols="8">-->
+<!--        <div v-if="questionsList.length === 0">-->
+<!--          <h1>Выберите вариант теста:</h1>-->
+<!--          <v-row>-->
+<!--            <v-col cols="4" v-for="(item, index) in langs" :key="index">-->
+<!--              <v-btn block outlined class="" color="primary"  @click="startTest(item.name, item.id)">-->
+<!--                {{item.name}}-->
+<!--              </v-btn>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
+<!--        </div>-->
 
-        <v-card v-else>
-          <div class="d-flex flex-row-reverse">
-            <v-btn class="mt-2 mr-2" color="red" small @click="clearTest" outlined>Выйти</v-btn>
-          </div>
-          <v-card-title>
-            {{header}}
+<!--        <v-card v-else>-->
+<!--            {{questionsList}}-->
+<!--          <div class="d-flex flex-row-reverse">-->
+<!--            <v-btn class="mt-2 mr-2" color="red" small @click="clearTest" outlined>Выйти</v-btn>-->
+<!--          </div>-->
+<!--          <v-card-title>-->
+<!--            {{header}}-->
+<!--          </v-card-title>-->
+<!--          <v-card-subtitle>-->
+<!--&lt;!&ndash;            <div&ndash;&gt;-->
+<!--&lt;!&ndash;                    v-for="(item, i) in qnty"&ndash;&gt;-->
+<!--&lt;!&ndash;                    :key="i"&ndash;&gt;-->
+<!--&lt;!&ndash;                    :complete="questions[i].correctAnswer"&ndash;&gt;-->
+<!--&lt;!&ndash;            >&ndash;&gt;-->
 
-          </v-card-title>
-          <v-card-subtitle>
-<!--            <div-->
-<!--                    v-for="(item, i) in qnty"-->
-<!--                    :key="i"-->
-<!--                    :complete="questions[i].correctAnswer"-->
-<!--            >-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--          </v-card-subtitle>-->
+<!--          <v-card-text>-->
+<!--            <div v-for="(item, i) in questionsList" :key="i">-->
 
+<!--              <Timer ref="timer" @time-out="checkAnswer(selected, question)"/>-->
+<!--              <h2>-->
+<!--                <span>тест</span>-->
+<!--              </h2>-->
+<!--              <v-card-->
+
+<!--                      class="mb-4 mt-4 pa-2 body-desc"-->
+<!--                      color="grey lighten-2"-->
+<!--              >-->
+<!--                тест-->
+<!--              </v-card>-->
+<!--              <v-radio-group v-model="selected">-->
+<!--&lt;!&ndash;                <div v-for="(n, i) in question.answers" :key="`${i}-radio`">&ndash;&gt;-->
+<!--&lt;!&ndash;                  <v-radio  class="radio mt-0 success&#45;&#45;text" color="primary"  :disabled="disabled" :value="n.id" >&ndash;&gt;-->
+<!--&lt;!&ndash;                    <template v-slot:label>&ndash;&gt;-->
+<!--&lt;!&ndash;                      <span :class="{ 'success&#45;&#45;text' : n.tips && showResult }">{{n.text}}</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </template>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </v-radio>&ndash;&gt;-->
+<!--&lt;!&ndash;                  <span class="tip success lighten-1 white&#45;&#45;text" v-if="n.tips && showResult">&ndash;&gt;-->
+<!--&lt;!&ndash;                      {{ n.tips }}&ndash;&gt;-->
+<!--&lt;!&ndash;                  </span>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--              </v-radio-group>-->
 <!--            </div>-->
-          </v-card-subtitle>
-          <v-card-text>
-            <div >
-              <Timer ref="timer" @time-out="checkAnswer(selected, question)"/>
-              <h2>тест.
-                <span>тест</span>
-              </h2>
-              <v-card
-
-                      class="mb-4 mt-4 pa-2 body-desc"
-                      color="grey lighten-2"
-              >
-                тест
-              </v-card>
-              <v-radio-group v-model="selected">
-<!--                <div v-for="(n, i) in question.answers" :key="`${i}-radio`">-->
-<!--                  <v-radio  class="radio mt-0 success&#45;&#45;text" color="primary"  :disabled="disabled" :value="n.id" >-->
-<!--                    <template v-slot:label>-->
-<!--                      <span :class="{ 'success&#45;&#45;text' : n.tips && showResult }">{{n.text}}</span>-->
-<!--                    </template>-->
-<!--                  </v-radio>-->
-<!--                  <span class="tip success lighten-1 white&#45;&#45;text" v-if="n.tips && showResult">-->
-<!--                      {{ n.tips }}-->
-<!--                  </span>-->
-<!--                </div>-->
-              </v-radio-group>
-            </div>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn
-                    class=" ma-2"
-                    color="primary"
-                    @click="answer(question)"
-                    :disabled="disabled"
-            >
-              Ответить
-            </v-btn>
-            <v-btn color="primary ma-2" :disabled="!disabled">
-              Далее
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+<!--          </v-card-text>-->
+<!--          <v-card-actions>-->
+<!--            <v-btn-->
+<!--                    class=" ma-2"-->
+<!--                    color="primary"-->
+<!--                    @click="answer(question)"-->
+<!--                    :disabled="disabled"-->
+<!--            >-->
+<!--              Ответить-->
+<!--            </v-btn>-->
+<!--            <v-btn color="primary ma-2" :disabled="!disabled">-->
+<!--              Далее-->
+<!--            </v-btn>-->
+<!--          </v-card-actions>-->
+<!--        </v-card>-->
+<!--      </v-col>-->
+<!--    </v-row>-->
   </v-container>
 </template>
 
 <script>
-  import { db } from '../static/db'
+  // import { db } from '../static/db'
+  import Form from '../components/Form'
 
   export default {
     name: 'Game',
     components: {
-      Timer: () => import('../components/Timer')
+      // Timer: () => import('../components/Timer'),
+        Form
+        // Form: () => import('../components/Form')
     },
 
     data: () => ({
@@ -102,7 +107,7 @@
 
     }),
     firestore: {
-      langs: db.collection('langs')
+        // langs: db.collection('langs'),
     },
 
     mounted() {
@@ -114,34 +119,43 @@
 
     methods: {
       startTest(name, id){
-        this.header = name
-        this.questionsList = this.getQuestionsList(id)
-        this.questionsList.forEach( item => item.header)
-        console.log('questionList', this.questionsList)
-        console.log('forEach', this.questionsList.forEach( item => item.header))
-        this.getQuestion()
+          this.header = name
+          this.questionsList = this.getQuestionsList(id)
+          this.getQuestion()
       },
-      getQuestionsList(id){
-        let res = []
-        db
-                .collection("tests")
-                .where("lang_id", "==", id)
-                .get()
-                .then(function(querySnapshot) {
-                  querySnapshot.forEach(function(doc) {
-                      const data = {
-                          header: doc.data().header
-                      }
-                    res.push(data)
-                  });
-                })
-                .catch(function(error) {
-                  console.log("Error getting documents: ", error);
-                });
-        return res
-      },
+
+      // getQuestionsList(id){
+      //
+      //    db
+      //       .collection("tests")
+      //       .where("lang_id", "==", id)
+      //       .get()
+      //       .then(function(querySnapshot) {
+      //           const result = []
+      //           querySnapshot.forEach(function(doc) {
+      //               result.push(doc.data())
+      //           });
+      //           console.log(this.langs)
+      //
+      //       })
+      //       .catch(function(error) {
+      //           console.log("Error getting documents: ", error);
+      //       })
+      //       .finally(function () {
+      //           console.log('данные загружены')
+      //       })
+      // },
       getQuestion(){
-          // console.log(this.questionsList)
+          console.log('просто вывод', this.questionsList)
+          console.log('map', this.questionsList.map(item => item))
+          this.questionsList.forEach(item => console.log('foreach',item))
+
+          //
+          // console.log('тестовый массив из data')
+          // console.log('просто вывод', this.testArray)
+          // console.log('map', this.testArray.map(item => item))
+          // this.testArray.forEach(item => console.log('foreach',item))
+
       },
       timerOff(){
         this.disabled = true
@@ -172,7 +186,7 @@
       clearTest(){
           let q = confirm('Вы действительно хотите завершить тест?')
           if(q){
-              this.answersList = null
+              this.questionsList = []
           }
 
       }

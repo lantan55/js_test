@@ -1,13 +1,15 @@
 import firebase from 'firebase/app'
-import 'firebase/firestore'
+import db from  'firebase/database'
 
-// Get a Firestore instance
-export const db = firebase
-    .initializeApp({ projectId: 'test-js-c93b9' })
-    .firestore()
-
-// Export types that exists in Firestore
-// This is not always necessary, but it's used in other examples
-const { Timestamp, GeoPoint } = firebase.firestore
-export { Timestamp, GeoPoint }
-
+const firebaseConfig = {
+    apiKey: "AIzaSyClijw7B8kNEac9HIPMemtS8HXh-pv1c4c",
+    authDomain: "test-js-c93b9.firebaseapp.com",
+    databaseURL: "https://test-js-c93b9.firebaseio.com",
+    projectId: "test-js-c93b9",
+    storageBucket: "test-js-c93b9.appspot.com",
+    messagingSenderId: "336722791340",
+    appId: "1:336722791340:web:973d82c8c13ca91d9bc809"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+export default db
